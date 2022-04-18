@@ -86,20 +86,24 @@ def parseJson(json_file):
             given `json_file' and generate the necessary .dat files to generate
             the SQL tables based on your relation design
             """
-            # print(item)
-            # items_row = item["ItemID"] + "|" + item["Name"] + "|" + item["Currently"] + "|" + item["First_Bid"]
-            # items_row += "|" + item["Seller"]["UserID"] + "|" + item["Number_of_Bids"] + "|" + item["Started"]
-            # items_row += "|" + item["Ends"] + "|" + item["Description"] + "\n"
-            items_row = [item["ItemID"], item["Name"], item["Currently"], item["First_Bid"], item["Seller"]["UserID"], item["Number_of_Bids"], item["Started"], item["Ends"], item["Description"]]
+            # NOTE: null values show up as NONE
+            # TODO: double check that all attributes are used
+
+            # escape double quotes and null strings are NONE
+            name = "\"" + item["Name"].replace("\"", "\"\"") + "\"" if item["Name"] else "\"NONE\""
+            currently = "\"" + item["Currently"].replace("\"", "\"\"") + "\"" if item["Currently"] else "\"NONE\""
+            first_bid = "\"" + item["First_Bid"].replace("\"", "\"\"") + "\"" if item["First_Bid"] else "\"NONE\""
+            seller_id = "\"" + item["Seller"]["UserID"].replace("\"", "\"\"") + "\"" if item["Seller"]["UserID"] else "\"NONE\""
+            started = "\"" + item["Started"].replace("\"", "\"\"") + "\"" if item["Started"] else "\"NONE\""
+            ends = "\"" + item["Ends"].replace("\"", "\"\"") + "\"" if item["Ends"] else "\"NONE\""
+            description = "\"" + item["Description"].replace("\"", "\"\"") + "\"" if item["Description"] else "\"NONE\""
+            # create one row of Items dat file
+            items_row = [item["ItemID"], name, currently, first_bid, seller_id, item["Number_of_Bids"], started, ends, description]
             items_row = map(str, items_row)
             items_row = "|".join(items_row) + "\n"
-
+            # append to Items dat file
             items_dat.write(items_row)
-            # print(item_table)
-            # break
-
-            pass
-
+            
         items_dat.close()
 
 """
