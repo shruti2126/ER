@@ -27,6 +27,7 @@ Happy parsing!
 import sys
 from json import loads
 from re import sub
+import os
 
 columnSeparator = "|"
 
@@ -76,15 +77,30 @@ of the necessary SQL tables for your database.
 def parseJson(json_file):
     with open(json_file, 'r') as f:
         items = loads(f.read())['Items'] # creates a Python dictionary of Items for the supplied json file
+
+        items_dat = open("Items.dat", "a")
+
         for item in items:
             """
             TODO: traverse the items dictionary to extract information from the
             given `json_file' and generate the necessary .dat files to generate
             the SQL tables based on your relation design
             """
-            
+            # print(item)
+            # items_row = item["ItemID"] + "|" + item["Name"] + "|" + item["Currently"] + "|" + item["First_Bid"]
+            # items_row += "|" + item["Seller"]["UserID"] + "|" + item["Number_of_Bids"] + "|" + item["Started"]
+            # items_row += "|" + item["Ends"] + "|" + item["Description"] + "\n"
+            items_row = [item["ItemID"], item["Name"], item["Currently"], item["First_Bid"], item["Seller"]["UserID"], item["Number_of_Bids"], item["Started"], item["Ends"], item["Description"]]
+            items_row = map(str, items_row)
+            items_row = "|".join(items_row) + "\n"
+
+            items_dat.write(items_row)
+            # print(item_table)
+            # break
 
             pass
+
+        items_dat.close()
 
 """
 Loops through each json files provided on the command line and passes each file
@@ -92,8 +108,12 @@ to the parser
 """
 def main(argv):
     if len(argv) < 2:
-        print >> sys.stderr, 'Usage: python skeleton_json_parser.py <path to json files>'
+        print(sys.stderr, 'Usage: python skeleton_json_parser.py <path to json files>')
         sys.exit(1)
+
+    if(os.path.exists("Items.dat")):
+        os.remove("Items.dat")
+    
     # loops over all .json files in the argument
     for f in argv[1:]:
         if isJson(f):
