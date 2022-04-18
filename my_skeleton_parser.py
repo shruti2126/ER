@@ -82,9 +82,7 @@ def parseJson(json_file):
             given `json_file' and generate the necessary .dat files to generate
             the SQL tables based on your relation design
             """
-            cat_table = item["ItemID"] + "|"
-            for cat in item["Category"]:
-                cat_table.append(cat)
+            
 
             pass
 
