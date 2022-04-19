@@ -1,0 +1,7 @@
+.separator |
+.import Items.dat Items
+update Items set Buy_Price = null where Buy_Price = -1;
+
+.import Category.dat Category
+
+.import Seller.dat Seller

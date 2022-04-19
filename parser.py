@@ -97,18 +97,23 @@ def parseJson(json_file):
             # Fill Items.dat
             name = "\"" + item["Name"].replace("\"", "\"\"") + "\"" if item["Name"] else "\"NONE\""
 #             currently = "\"" + item["Currently"].replace("\"", "\"\"") + "\"" if item["Currently"] else "\"NONE\""
-            currently = transformDollar(item['Currently']) 
+            currently = transformDollar(item['Currently']) if item['Currently'] else -1
 #             first_bid = "\"" + item["First_Bid"].replace("\"", "\"\"") + "\"" if item["First_Bid"] else "\"NONE\""
-            first_bid = transformDollar(item['First_Bid']) 
+            first_bid = transformDollar(item['First_Bid']) if item['Currently'] else -1
             seller_id = "\"" + item["Seller"]["UserID"].replace("\"", "\"\"") + "\"" if item["Seller"]["UserID"] else "\"NONE\""
             # buy_price = "\"" + item["Buy_Price"].replace("\"", "\"\"") + "\"" if item["Buy_Price"] else "\"NONE\""
 #             started = "\"" + item["Started"].replace("\"", "\"\"") + "\"" if item["Started"] else "\"NONE\""
+            if 'Buy_Price' in items:
+                buy_price = transformDollar(item['Buy_Price'])
+            else:
+                buy_price = -1
+                
             started = transformDttm(item['Started'])
 #             ends = "\"" + item["Ends"].replace("\"", "\"\"") + "\"" if item["Ends"] else "\"NONE\""
             ends = transformDttm(item['Ends'])
             description = "\"" + item["Description"].replace("\"", "\"\"") + "\"" if item["Description"] else "\"NONE\""
             # create one row of Items dat file
-            items_row = [item["ItemID"], name, currently, first_bid, seller_id, item["Number_of_Bids"], started, ends, description]
+            items_row = [item["ItemID"], name, currently, first_bid, buy_price, seller_id, item["Number_of_Bids"], started, ends, description]
             items_row = map(str, items_row)
             items_row = "|".join(items_row) + "\n"
             # append to Items dat file
