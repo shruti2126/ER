@@ -79,6 +79,9 @@ def parseJson(json_file):
         items = loads(f.read())['Items'] # creates a Python dictionary of Items for the supplied json file
 
         items_dat = open("Items.dat", "a")
+        category_dat = open("Category.dat", "a")
+        bid_dat = open("Bid.dat", "a")
+        seller_dat = open("Seller.dat", "a")
 
         for item in items:
             """
@@ -86,14 +89,15 @@ def parseJson(json_file):
             given `json_file' and generate the necessary .dat files to generate
             the SQL tables based on your relation design
             """
-            # NOTE: null values show up as NONE
-            # TODO: double check that all attributes are used
+            # TODO: double check that all attributes are used (BUY PRICE)
+            # NOTE: escape double quotes and null strings are NONE
 
-            # escape double quotes and null strings are NONE
+            # Fill Items.dat
             name = "\"" + item["Name"].replace("\"", "\"\"") + "\"" if item["Name"] else "\"NONE\""
             currently = "\"" + item["Currently"].replace("\"", "\"\"") + "\"" if item["Currently"] else "\"NONE\""
             first_bid = "\"" + item["First_Bid"].replace("\"", "\"\"") + "\"" if item["First_Bid"] else "\"NONE\""
             seller_id = "\"" + item["Seller"]["UserID"].replace("\"", "\"\"") + "\"" if item["Seller"]["UserID"] else "\"NONE\""
+            # buy_price = "\"" + item["Buy_Price"].replace("\"", "\"\"") + "\"" if item["Buy_Price"] else "\"NONE\""
             started = "\"" + item["Started"].replace("\"", "\"\"") + "\"" if item["Started"] else "\"NONE\""
             ends = "\"" + item["Ends"].replace("\"", "\"\"") + "\"" if item["Ends"] else "\"NONE\""
             description = "\"" + item["Description"].replace("\"", "\"\"") + "\"" if item["Description"] else "\"NONE\""
@@ -103,8 +107,27 @@ def parseJson(json_file):
             items_row = "|".join(items_row) + "\n"
             # append to Items dat file
             items_dat.write(items_row)
-            
+
+            # Fill Category.dat
+            if item["Category"]:
+                for org_cat in item["Category"]:
+                    cat = "\"" + org_cat.replace("\"", "\"\"") + "\""
+                    cat_row = item["ItemID"] + "|" + cat + "\n"
+                    category_dat.write(cat_row)
+
+            # Fill Sellers.dat
+            sell_row = seller_id + "|" + item["Seller"]["Rating"] + "\n"
+            seller_dat.write(sell_row)
+
+            # Fill Bid.dat
+            if item["Number_of_Bids"] != "0":
+                for bid in item["Bids"]:
+                    pass
+  
         items_dat.close()
+        category_dat.close()
+        bid_dat.close()
+        seller_dat.close()
 
 """
 Loops through each json files provided on the command line and passes each file
@@ -117,6 +140,12 @@ def main(argv):
 
     if(os.path.exists("Items.dat")):
         os.remove("Items.dat")
+    if(os.path.exists("Category.dat")):
+        os.remove("Category.dat")
+    if(os.path.exists("Bid.dat")):
+        os.remove("Bid.dat")
+    if(os.path.exists("Seller.dat")):
+        os.remove("Seller.dat")
     
     # loops over all .json files in the argument
     for f in argv[1:]:
