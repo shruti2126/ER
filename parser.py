@@ -1,14 +1,11 @@
-
 """
 FILE: skeleton_parser.py
 ------------------
 Author: Firas Abuzaid (fabuzaid@stanford.edu)
 Author: Perth Charernwattanagul (puch@stanford.edu)
 Modified: 04/21/2014
-
 Skeleton parser for CS564 programming project 1. Has useful imports and
 functions for parsing, including:
-
 1) Directory handling -- the parser takes a list of eBay json files
 and opens each file inside of a loop. You just need to fill in the rest.
 2) Dollar value conversions -- the json files store dollar value amounts in
@@ -17,7 +14,6 @@ like XXXXX.xx.
 3) Date/time conversions -- the json files store dates/ times in the form
 Mon-DD-YY HH:MM:SS -- we wrote a function (transformDttm) that converts to the
 for YYYY-MM-DD HH:MM:SS, which will sort chronologically in SQL.
-
 Your job is to implement the parseJson function, which is invoked on each file by
 the main function. We create the initial Python dictionary object of items for
 you; the rest is up to you!
@@ -89,20 +85,29 @@ def parseJson(json_file):
             given `json_file' and generate the necessary .dat files to generate
             the SQL tables based on your relation design
             """
-            # TODO: double check that all attributes are used (BUY PRICE)
+            # TODO: How do we enforce primary keys? do we delete rows that don't follow the rules?
+            # TODO: remove duplicates.
+            # TODO: itemid and number of bids? rating?
             # NOTE: escape double quotes and null strings are NONE
 
+            #QUESTION: We haven't used the transform dollar and dttm functions provided
+            # if ("Buy_Price" in item.keys()):
+        # Buy_Price = str(transformDollar(item['Buy_Price']))
+
             # Fill Items.dat
-            name = "\"" + item["Name"].replace("\"", "\"\"") + "\"" if item["Name"] else "\"NONE\""
-            currently = "\"" + item["Currently"].replace("\"", "\"\"") + "\"" if item["Currently"] else "\"NONE\""
-            first_bid = "\"" + item["First_Bid"].replace("\"", "\"\"") + "\"" if item["First_Bid"] else "\"NONE\""
-            seller_id = "\"" + item["Seller"]["UserID"].replace("\"", "\"\"") + "\"" if item["Seller"]["UserID"] else "\"NONE\""
-            # buy_price = "\"" + item["Buy_Price"].replace("\"", "\"\"") + "\"" if item["Buy_Price"] else "\"NONE\""
-            started = "\"" + item["Started"].replace("\"", "\"\"") + "\"" if item["Started"] else "\"NONE\""
-            ends = "\"" + item["Ends"].replace("\"", "\"\"") + "\"" if item["Ends"] else "\"NONE\""
-            description = "\"" + item["Description"].replace("\"", "\"\"") + "\"" if item["Description"] else "\"NONE\""
+            item_id = item["ItemID"] if "ItemID" in item.keys() and item['ItemID'] else "-1"
+            name = "\"" + item["Name"].replace("\"", "\"\"") + "\"" if "Name" in item.keys() and item["Name"] else "\"NONE\""
+            currently = transformDollar(item['Currently']) if "Currently" in item.keys() and item['Currently'] else "-1"
+            first_bid = transformDollar(item['First_Bid']) if "First_Bid" in item.keys() and item['First_Bid'] else "-1"
+            seller_id = "\"" + item["Seller"]["UserID"].replace("\"", "\"\"") + "\"" if "Seller" in item.keys() and "UserID" in item["Seller"].keys() and item["Seller"]["UserID"] else "\"NONE\""
+            buy_price = transformDollar(item['Buy_Price']) if "Buy_Price" in item.keys() and item['Buy_Price'] else "-1"
+            started = transformDttm(item['Started']) if "Started" in item.keys() and item['Started'] else "0000-00-00 00:00:00"
+            ends = transformDttm(item['Ends']) if "Ends" in item.keys() and item['Ends'] else "0000-00-00 00:00:00"
+            description = "\"" + item["Description"].replace("\"", "\"\"") + "\"" if "Description" in item.keys() and item["Description"] else "\"NONE\""
+            num_bids = item["Number_of_Bids"] if "Number_of_Bids" in item.keys() and item['Number_of_Bids'] else "-1"
+
             # create one row of Items dat file
-            items_row = [item["ItemID"], name, currently, first_bid, seller_id, item["Number_of_Bids"], started, ends, description]
+            items_row = [item_id, name, currently, first_bid, buy_price, seller_id, num_bids, started, ends, description]
             items_row = map(str, items_row)
             items_row = "|".join(items_row) + "\n"
             # append to Items dat file
@@ -112,17 +117,35 @@ def parseJson(json_file):
             if item["Category"]:
                 for org_cat in item["Category"]:
                     cat = "\"" + org_cat.replace("\"", "\"\"") + "\""
-                    cat_row = item["ItemID"] + "|" + cat + "\n"
+
+                    cat_row = item_id + "|" + cat + "\n"
                     category_dat.write(cat_row)
 
             # Fill Sellers.dat
-            sell_row = seller_id + "|" + item["Seller"]["Rating"] + "\n"
+            seller_rating = item["Seller"]["Rating"] if "Seller" in item.keys() and "Rating" in item["Seller"].keys() and item["Seller"]["Rating"] else "-1"
+            sell_row = seller_id + "|" + seller_rating + "\n"
             seller_dat.write(sell_row)
 
             # Fill Bid.dat
             if item["Number_of_Bids"] != "0":
-                for bid in item["Bids"]:
-                    pass
+                for bid_0 in item["Bids"]:
+                    bid = bid_0["Bid"]
+                    bidder = bid["Bidder"]
+
+                    # print(item["Bids"])
+                    # print(bid)
+                    # print(bidder["Country"])
+                    # exit()
+
+                    amount = transformDollar(bid["Amount"]) if "Amount" in bid.keys() and bid["Amount"] else "-1"
+                    bidder_id = "\"" + bidder["UserID"].replace("\"", "\"\"") + "\"" if "UserID" in bidder.keys() and bidder["UserID"] else "\"NONE\""
+                    time = transformDttm(bid["Time"]) if "Time" in bid.keys() and bid["Time"] else "0000-00-00 00:00:00"
+                    location = "\"" + bidder["Location"].replace("\"", "\"\"") + "\"" if "Location" in bidder.keys() and bidder["Location"] else "\"NONE\""
+                    country = "\"" + bidder["Country"].replace("\"", "\"\"") + "\"" if "Country" in bidder.keys() and bidder["Country"] else "\"NONE\""
+                    bidder_rating = bidder["Rating"] if "Rating" in bidder.keys() and bidder["Rating"] else "-1"
+                    bid_row = [item_id, amount, time, bidder_id, bidder_rating, location, country]
+                    bid_row = "|".join(bid_row) + "\n"
+                    bid_dat.write(bid_row)
   
         items_dat.close()
         category_dat.close()
