@@ -1,1 +1,1 @@
-python my_parser.py ebay_data/items-*.json
+python parser.py ebay_data/ebay_data/items-*.json
