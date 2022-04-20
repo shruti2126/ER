@@ -18,9 +18,9 @@ drop table if exists Bid;
 create table Bid (
     ItemID int NOT NULL, 
     Amount double NOT NULL, 
-    Time TIMESTAMP NOT NULL,
+    Bid_Time TIMESTAMP NOT NULL,
     UserID varchar(255) NOT NULL, 
-    Rating varchar(255) NOT NULL, 
+    Rating int NOT NULL, 
     Location varchar(255), 
     Country varchar(255),
     Primary Key (ItemID, UserID),
@@ -30,7 +30,7 @@ create table Bid (
 drop table if exists Seller;
 create table Seller (
     UserID int NOT NULL, 
-    Rating varchar(255) NOT NULL, 
+    Rating int NOT NULL, 
     PRIMARY KEY (UserID)
 );
 
