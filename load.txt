@@ -1,13 +1,13 @@
 .separator |
 
-.import Items.dat Items
+.import newItems.dat Items
 update Items set Buy_Price = null where Buy_Price = -1;
 
 
-.import Bid.dat Bid
+.import newBid.dat Bid
 update Bid set Location = null where Location = "NONE";
 update Bid set Country = null where Country = "NONE";
 
-.import Seller.dat Seller
+.import newSeller.dat Seller
 
-.import Category.dat Category
+.import newCategory.dat Category

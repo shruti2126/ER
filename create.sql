@@ -16,21 +16,24 @@ create table Items(
 
 drop table if exists Bid;
 create table Bid (
+    BidID varchar(255),
     ItemID int, 
+    UserID varchar(255), 
     Amount double, 
     Bid_Time TIMESTAMP,
-    UserID varchar(255), 
     Rating int, 
     Location varchar(255), 
     Country varchar(255),
-    Primary Key (ItemID, UserID),
+    Primary Key (BidID),
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID)
 );
 
 drop table if exists Seller;
 create table Seller (
-    UserID int, 
+    UserID varchar(255), 
     Rating int, 
+    Location varchar(255), 
+    Country varchar(255),
     PRIMARY KEY (UserID)
 );
 
@@ -38,6 +41,6 @@ drop table if exists Category;
 create table Category (
     ItemID int, 
     CategoryName varchar(255), 
-    PRIMARY KEY (ItemID),
+    PRIMARY KEY (ItemID, CategoryName),
     FOREIGN KEY (ItemID) REFERENCES Items (ItemID)
 );
