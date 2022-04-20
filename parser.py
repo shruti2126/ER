@@ -96,14 +96,14 @@ def parseJson(json_file):
 
             # Fill Items.dat
             item_id = item["ItemID"] if "ItemID" in item.keys() and item['ItemID'] else "-1"
-            name = "\"" + item["Name"].replace("\"", "\"\"") + "\"" if "Name" in item.keys() and item["Name"] else "\"NONE\""
+            name = "\"" + item["Name"].replace("\"", "\"\"") + "\"" if "Name" in item.keys() and item["Name"] else "NONE"
             currently = transformDollar(item['Currently']) if "Currently" in item.keys() and item['Currently'] else "-1"
             first_bid = transformDollar(item['First_Bid']) if "First_Bid" in item.keys() and item['First_Bid'] else "-1"
-            seller_id = "\"" + item["Seller"]["UserID"].replace("\"", "\"\"") + "\"" if "Seller" in item.keys() and "UserID" in item["Seller"].keys() and item["Seller"]["UserID"] else "\"NONE\""
+            seller_id = "\"" + item["Seller"]["UserID"].replace("\"", "\"\"") + "\"" if "Seller" in item.keys() and "UserID" in item["Seller"].keys() and item["Seller"]["UserID"] else "NONE"
             buy_price = transformDollar(item['Buy_Price']) if "Buy_Price" in item.keys() and item['Buy_Price'] else "-1"
             started = transformDttm(item['Started']) if "Started" in item.keys() and item['Started'] else "0000-00-00 00:00:00"
             ends = transformDttm(item['Ends']) if "Ends" in item.keys() and item['Ends'] else "0000-00-00 00:00:00"
-            description = "\"" + item["Description"].replace("\"", "\"\"") + "\"" if "Description" in item.keys() and item["Description"] else "\"NONE\""
+            description = "\"" + item["Description"].replace("\"", "\"\"") + "\"" if "Description" in item.keys() and item["Description"] else "NONE"
             num_bids = item["Number_of_Bids"] if "Number_of_Bids" in item.keys() and item['Number_of_Bids'] else "-1"
 
             # create one row of Items dat file

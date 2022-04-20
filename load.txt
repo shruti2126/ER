@@ -1,7 +1,29 @@
 .separator |
-.import Items.dat Items
-update Items set Buy_Price = null where Buy_Price = -1;
 
-.import Category.dat Category
+.import Items.dat Items
+update Items set ItemID = null where ItemID = -1;
+update Items set Name = null where Name = "NONE";
+update Items set Currently = null where Currently = -1;
+update Items set First_Bid = null where First_Bid = -1;
+update Items set SellerID = null where SellerID = "NONE";
+update Items set Number_Of_Bids = null where Number_Of_Bids = -1;
+update Items set Buy_Price = null where Buy_Price = -1;
+update Items set Started = null where Started = "0000-00-00 00:00:00";
+update Items set Ends = null where Ends = "0000-00-00 00:00:00";
+update Items set Description = null where Description = "NONE";
+
+.import Bid.dat Bid
+update Bid set ItemID = null where ItemID = -1;
+update Bid set Amount = null where Amount = -1;
+update Bid set Bid_Time = null where Bid_Time = "0000-00-00 00:00:00";
+update Bid set UserID = null where UserID = "NONE";
+update Bid set Rating = null where Rating = -1;
+update Bid set Location = null where Location = "NONE";
+update Bid set Country = null where Country = "NONE";
 
 .import Seller.dat Seller
+update Seller set UserID = null where UserID = "NONE";
+update Seller set Rating = null where Rating = -1;
+
+.import Category.dat Category
+update Category set ItemID = null where ItemID = -1;
